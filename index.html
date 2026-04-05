@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Scattergories Eh!</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #0f0f23;
+      --bg-card: #1a1a3e;
+      --bg-card-revealed: #1e2a4a;
+      --text-primary: #f0f0f0;
+      --text-muted: #8888aa;
+      --accent: #e63946;
+      --accent-light: #ff6b6b;
+      --timer-green: #2ecc71;
+      --timer-yellow: #f39c12;
+      --timer-red: #e74c3c;
+      --card-border: #2a2a5e;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* ===== WELCOME SCREEN ===== */
+    #welcome-screen {
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .maple-leaf-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.04;
+      width: 80vw;
+      max-width: 400px;
+    }
+
+    .welcome-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-title {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 0.25rem;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .game-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .round-info {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2.5rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(230, 57, 70, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 2px solid var(--card-border);
+    }
+
+    .btn + .btn {
+      margin-top: 1rem;
+    }
+
+    .speech-notice {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--timer-yellow);
+      display: none;
+    }
+
+    /* ===== GAME SCREEN ===== */
+    #game-screen {
+      padding: 0;
+    }
+
+    .game-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: rgba(15, 15, 35, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .letter-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(230, 57, 70, 0.5);
+    }
+
+    .timer-display {
+      font-size: 2.2rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .timer-green { color: var(--timer-green); }
+    .timer-yellow { color: var(--timer-yellow); }
+    .timer-red { color: var(--timer-red); animation: pulse 0.8s ease-in-out infinite; }
+
+    .round-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .category-list {
+      width: 100%;
+      padding: 0.75rem 1rem 6rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: none;
+    }
+
+    .category-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      animation: fadeSlideIn 0.5s ease forwards;
+    }
+
+    .category-item.speaking {
+      border-color: var(--accent);
+      background: var(--bg-card-revealed);
+      box-shadow: 0 0 12px rgba(230, 57, 70, 0.2);
+    }
+
+    .category-num {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      min-width: 1.8rem;
+      text-align: center;
+    }
+
+    .category-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+    }
+
+    /* Status banner for pre-timer phases */
+    .status-banner {
+      width: 100%;
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(26, 26, 62, 0.8);
+      display: none;
+    }
+
+    .status-banner.active {
+      display: block;
+    }
+
+    /* ===== ROUND OVER SCREEN ===== */
+    #roundover-screen {
+      padding: 0;
+    }
+
+    .roundover-header {
+      width: 100%;
+      text-align: center;
+      padding: 2rem 1.5rem 1rem;
+      background: linear-gradient(180deg, rgba(230, 57, 70, 0.15), transparent);
+    }
+
+    .timesup-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .timesup-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .roundover-letter {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin: 0.75rem 0;
+    }
+
+    .roundover-categories {
+      width: 100%;
+      padding: 0 1rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .roundover-category {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem;
+      margin-bottom: 0.35rem;
+      background: var(--bg-card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+    }
+
+    .roundover-buttons {
+      width: 100%;
+      padding: 1.25rem 1.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(0deg, var(--bg-primary) 60%, transparent);
+      position: sticky;
+      bottom: 0;
+    }
+
+    .roundover-buttons .btn {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* ===== LETTER ANNOUNCE OVERLAY ===== */
+    .letter-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 35, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .letter-overlay.active {
+      display: flex;
+    }
+
+    .letter-overlay-char {
+      font-size: 12rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: 0 0 60px rgba(230, 57, 70, 0.6);
+      animation: letterPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .letter-overlay-label {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes letterPop {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ===== DESKTOP (not primary but supported) ===== */
+    @media (min-width: 600px) {
+      .game-title { font-size: 4rem; }
+      .letter-display { font-size: 5rem; }
+      .timer-display { font-size: 3rem; }
+      .category-list { max-width: 600px; margin: 0 auto; }
+      .roundover-categories { max-width: 600px; margin: 0 auto; }
+      .category-text { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MAPLE LEAF SVG (watermark) -->
+  <div id="welcome-screen" class="screen active">
+    <svg class="maple-leaf-bg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 5 L53 20 L65 12 L60 25 L75 22 L65 33 L80 35 L66 42 L78 55 L62 50 L65 65 L55 55 L50 70 L45 55 L35 65 L38 50 L22 55 L34 42 L20 35 L35 33 L25 22 L40 25 L35 12 L47 20 Z" fill="currentColor"/>
+    </svg>
+    <div class="welcome-content">
+      <h1 class="game-title">Scattergories Eh!</h1>
+      <p class="game-subtitle">Canadian Family Edition</p>
+      <div class="round-info" id="round-info">Round 1</div>
+      <button class="btn btn-primary" id="btn-start" onclick="startRound()">Start Round</button>
+      <p class="speech-notice" id="speech-notice">Speech not available — visual mode only</p>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <div class="game-header">
+      <div>
+        <div class="letter-display" id="game-letter">A</div>
+        <div class="round-badge" id="game-round-badge">Round 1 &middot; List 1</div>
+      </div>
+      <div class="timer-display timer-green" id="timer-display">3:00</div>
+    </div>
+    <div class="status-banner" id="status-banner">Revealing categories...</div>
+    <div class="category-list" id="category-list"></div>
+  </div>
+
+  <!-- LETTER ANNOUNCE OVERLAY -->
+  <div class="letter-overlay" id="letter-overlay">
+    <div class="letter-overlay-char" id="letter-overlay-char">A</div>
+    <div class="letter-overlay-label">Your letter</div>
+  </div>
+
+  <!-- ROUND OVER SCREEN -->
+  <div id="roundover-screen" class="screen">
+    <div class="roundover-header">
+      <div class="timesup-title">Time's Up!</div>
+      <div class="timesup-subtitle">Pencils Down!</div>
+      <div class="roundover-letter" id="roundover-letter">A</div>
+    </div>
+    <div class="roundover-categories" id="roundover-categories"></div>
+    <div class="roundover-buttons">
+      <button class="btn btn-primary" onclick="nextRound()">Next Round</button>
+      <button class="btn btn-secondary" onclick="newGame()">New Game</button>
+    </div>
+  </div>
+
+<script>
+// ===== CONFIGURATION =====
+const CONFIG = {
+  REVEAL_INTERVAL_MS: 15000,
+  TIMER_SECONDS: 180,
+  WARNING_SECONDS: 30,
+  ELIGIBLE_LETTERS: 'ABCDEFGHIJKLMNOPRSTUVWY',
+  CATEGORIES_PER_ROUND: 12,
+  LETTER_ANNOUNCE_PAUSE: 2500,
+  POST_REVEAL_PAUSE: 2000
+};
+
+// ===== CATEGORY LISTS =====
+const CATEGORY_LISTS = [
+  {
+    name: "The Classic Eh",
+    categories: [
+      "A Canadian city or town",
+      "Animals",
+      "Things found in a kitchen",
+      "Famous Canadians",
+      "Foods you eat at a BBQ",
+      "School subjects",
+      "Things that are cold",
+      "Boys' names",
+      "Sports",
+      "Things you find at a lake",
+      "Reasons to be late",
+      "Items in a grocery store"
+    ]
+  },
+  {
+    name: "Coast to Coast",
+    categories: [
+      "A province or territory",
+      "TV shows",
+      "Things in a park",
+      "Occupations",
+      "Fruits or vegetables",
+      "Things that are round",
+      "Musical instruments or genres",
+      "Excuses for not doing homework",
+      "Things at a hockey rink",
+      "Clothing items",
+      "Pizza toppings",
+      "Girls' names"
+    ]
+  },
+  {
+    name: "True North",
+    categories: [
+      "Canadian landmarks or natural wonders",
+      "Things in a backpack",
+      "Desserts or sweet treats",
+      "Types of vehicles",
+      "Animals found in Canada",
+      "Things you shout",
+      "Breakfast foods",
+      "Book or movie titles",
+      "Things made of wood",
+      "Hobbies",
+      "Things at a birthday party",
+      "Words associated with winter"
+    ]
+  },
+  {
+    name: "The Great Outdoors",
+    categories: [
+      "Camping gear",
+      "Canadian lakes, rivers, or mountains",
+      "Things that fly",
+      "Restaurants or food chains",
+      "Something you are afraid of",
+      "Games or toys",
+      "Things in a bathroom",
+      "Types of music",
+      "Things at a wedding",
+      "Colours or shades",
+      "Holiday or celebration items",
+      "Athletes or sports teams"
+    ]
+  },
+  {
+    name: "Around Town",
+    categories: [
+      "Things in a mall or store",
+      "Songs or bands",
+      "Things that grow",
+      "Types of weather",
+      "Nicknames or pet names",
+      "Things in a toolbox or garage",
+      "Snack foods",
+      "Places you go on vacation",
+      "Words that describe personality",
+      "Things you find in the woods",
+      "Kitchen appliances or utensils",
+      "Canadian foods or drinks"
+    ]
+  },
+  {
+    name: "Family Night",
+    categories: [
+      "Board games or card games",
+      "Things at a carnival or fair",
+      "Types of candy or chocolate",
+      "Something a teacher would say",
+      "Things in a hospital",
+      "Bodies of water worldwide",
+      "Things that are sticky",
+      "Cartoon or animated characters",
+      "Things you do before bed",
+      "Things at the beach",
+      "Canadian slang or expressions",
+      "Farm animals or farm things"
+    ]
+  },
+  {
+    name: "Northern Lights",
+    categories: [
+      "Things that glow or shine",
+      "Historical figures",
+      "Things in a classroom",
+      "Drinks hot or cold",
+      "Things associated with Canada",
+      "Things at a concert or festival",
+      "Scary things",
+      "Flowers, trees, or plants",
+      "Things in a suitcase",
+      "Awards, trophies, or achievements",
+      "Sounds or noises",
+      "Things at a Tim Hortons"
+    ]
+  },
+  {
+    name: "Playoff Round",
+    categories: [
+      "Things you find in the ocean",
+      "Fictional characters",
+      "Things in a museum",
+      "Three-syllable words",
+      "Things that smell good",
+      "Canadian wildlife",
+      "Things that bounce",
+      "Words related to space",
+      "Things at a sleepover",
+      "Things that melt",
+      "Things you save up to buy",
+      "Compliments you give someone"
+    ]
+  }
+];
+
+// ===== GAME STATE =====
+const state = {
+  phase: 'idle',
+  currentLetter: '',
+  currentListIndex: -1,
+  revealedCount: 0,
+  timerSeconds: CONFIG.TIMER_SECONDS,
+  timerInterval: null,
+  revealTimeout: null,
+  usedListIndices: [],
+  usedLetters: [],
+  roundNumber: 0,
+  audioCtx: null,
+  speechAvailable: false
+};
+
+// ===== DOM REFS =====
+const $ = (id) => document.getElementById(id);
+
+// ===== INIT =====
+function init() {
+  state.speechAvailable = 'speechSynthesis' in window;
+  if (!state.speechAvailable) {
+    $('speech-notice').style.display = 'block';
+  }
+  // Warm up speech synthesis on some browsers
+  if (state.speechAvailable) {
+    window.speechSynthesis.getVoices();
+  }
+  updateRoundInfo();
+}
+
+// ===== SPEECH =====
+function speak(text) {
+  return new Promise((resolve) => {
+    if (!state.speechAvailable) {
+      resolve();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    // Try to pick a good English voice
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(v => v.lang.startsWith('en') && v.localService) ||
+                         voices.find(v => v.lang.startsWith('en'));
+    if (englishVoice) utterance.voice = englishVoice;
+
+    let resolved = false;
+    const done = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve();
+      }
+    };
+
+    utterance.onend = done;
+    utterance.onerror = done;
+    window.speechSynthesis.speak(utterance);
+
+    // Fallback timeout
+    setTimeout(done, Math.max(text.length * 90 + 2000, 4000));
+  });
+}
+
+// ===== AUDIO =====
+function getAudioCtx() {
+  if (!state.audioCtx) {
+    state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume();
+  }
+  return state.audioCtx;
+}
+
+function playBuzzer() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    // Main buzzer tone
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.type = 'square';
+    osc1.frequency.setValueAtTime(250, now);
+    osc1.frequency.linearRampToValueAtTime(150, now + 1.2);
+    gain1.gain.setValueAtTime(0.25, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+    osc1.start(now);
+    osc1.stop(now + 1.5);
+
+    // Undertone for richness
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(125, now);
+    osc2.frequency.linearRampToValueAtTime(80, now + 1.2);
+    gain2.gain.setValueAtTime(0.1, now);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+    osc2.start(now);
+    osc2.stop(now + 1.5);
+  } catch (e) {
+    // Audio not supported, continue silently
+  }
+}
+
+function playWarningTone() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, now);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } catch (e) {}
+}
+
+function playTickSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, now);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  } catch (e) {}
+}
+
+// ===== LETTER SELECTION =====
+function pickRandomLetter() {
+  let available = CONFIG.ELIGIBLE_LETTERS.split('').filter(l => !state.usedLetters.includes(l));
+  if (available.length === 0) {
+    state.usedLetters = [];
+    available = CONFIG.ELIGIBLE_LETTERS.split('');
+  }
+  const letter = available[Math.floor(Math.random() * available.length)];
+  state.usedLetters.push(letter);
+  return letter;
+}
+
+// ===== LIST SELECTION =====
+function pickCategoryList() {
+  let available = [];
+  for (let i = 0; i < CATEGORY_LISTS.length; i++) {
+    if (!state.usedListIndices.includes(i)) available.push(i);
+  }
+  if (available.length === 0) {
+    state.usedListIndices = [];
+    available = CATEGORY_LISTS.map((_, i) => i);
+  }
+  const idx = available[Math.floor(Math.random() * available.length)];
+  state.usedListIndices.push(idx);
+  return idx;
+}
+
+// ===== SCREEN MANAGEMENT =====
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(screenId).classList.add('active');
+}
+
+function updateRoundInfo() {
+  $('round-info').textContent = `Round ${state.roundNumber + 1}`;
+}
+
+// ===== GAME FLOW =====
+async function startRound() {
+  // Initialize audio context on user gesture
+  getAudioCtx();
+
+  state.roundNumber++;
+  state.phase = 'letter';
+  state.revealedCount = 0;
+  state.timerSeconds = CONFIG.TIMER_SECONDS;
+
+  // Pick letter and list
+  state.currentLetter = pickRandomLetter();
+  state.currentListIndex = pickCategoryList();
+  const list = CATEGORY_LISTS[state.currentListIndex];
+
+  // Setup game screen
+  $('game-letter').textContent = state.currentLetter;
+  $('game-round-badge').textContent = `Round ${state.roundNumber} \u00B7 ${list.name}`;
+  $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
+  $('timer-display').className = 'timer-display timer-green';
+
+  // Build category slots
+  const catList = $('category-list');
+  catList.innerHTML = '';
+  list.categories.forEach((cat, i) => {
+    const div = document.createElement('div');
+    div.className = 'category-item';
+    div.id = `cat-${i}`;
+    div.innerHTML = `<span class="category-num">${i + 1}</span><span class="category-text">${cat}</span>`;
+    catList.appendChild(div);
+  });
+
+  // Show letter overlay
+  $('letter-overlay-char').textContent = state.currentLetter;
+  $('letter-overlay').classList.add('active');
+  showScreen('game-screen');
+
+  // Announce letter
+  await speak(`The letter is ${state.currentLetter}`);
+  await sleep(CONFIG.LETTER_ANNOUNCE_PAUSE);
+
+  // Hide letter overlay
+  $('letter-overlay').classList.remove('active');
+
+  // Show status
+  const banner = $('status-banner');
+  banner.textContent = 'Revealing categories...';
+  banner.classList.add('active');
+
+  // Start category reveal
+  state.phase = 'revealing';
+  await revealCategories(list.categories);
+
+  // All categories revealed
+  banner.textContent = 'Your 3 minutes start now!';
+  await speak('Your 3 minutes start now!');
+  await sleep(1000);
+  banner.classList.remove('active');
+
+  // Start countdown
+  state.phase = 'countdown';
+  startTimer();
+}
+
+async function revealCategories(categories) {
+  for (let i = 0; i < categories.length; i++) {
+    if (state.phase !== 'revealing') return;
+
+    const el = $(`cat-${i}`);
+    el.classList.add('revealed', 'speaking');
+    state.revealedCount = i + 1;
+
+    // Scroll to revealed category
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Speak the category
+    await speak(`Number ${i + 1}. ${categories[i]}`);
+
+    // Remove speaking highlight
+    el.classList.remove('speaking');
+
+    // Wait the interval (minus speech time) before next — but not after last
+    if (i < categories.length - 1) {
+      await sleep(CONFIG.REVEAL_INTERVAL_MS);
+    }
+  }
+}
+
+function startTimer() {
+  updateTimerDisplay();
+
+  state.timerInterval = setInterval(() => {
+    state.timerSeconds--;
+    updateTimerDisplay();
+
+    if (state.timerSeconds === CONFIG.WARNING_SECONDS) {
+      playWarningTone();
+      speak('30 seconds remaining');
+    }
+
+    if (state.timerSeconds <= 10 && state.timerSeconds > 0) {
+      playTickSound();
+    }
+
+    if (state.timerSeconds <= 0) {
+      timesUp();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const display = $('timer-display');
+  display.textContent = formatTime(state.timerSeconds);
+
+  if (state.timerSeconds > CONFIG.WARNING_SECONDS) {
+    display.className = 'timer-display timer-green';
+  } else if (state.timerSeconds > 10) {
+    display.className = 'timer-display timer-yellow';
+  } else {
+    display.className = 'timer-display timer-red';
+  }
+}
+
+async function timesUp() {
+  clearInterval(state.timerInterval);
+  state.timerInterval = null;
+  state.phase = 'timesup';
+
+  // Buzzer and announcement
+  playBuzzer();
+  await sleep(300);
+  await speak("Time's up! Pencils down!");
+
+  // Build round-over screen
+  $('roundover-letter').textContent = state.currentLetter;
+  const container = $('roundover-categories');
+  container.innerHTML = '';
+  const list = CATEGORY_LISTS[state.currentListIndex];
+  list.categories.forEach((cat, i) => {
+    const div = document.createElement('div');
+    div.className = 'roundover-category';
+    div.innerHTML = `<span class="category-num">${i + 1}</span><span class="category-text">${cat}</span>`;
+    container.appendChild(div);
+  });
+
+  showScreen('roundover-screen');
+}
+
+function nextRound() {
+  cleanup();
+  updateRoundInfo();
+  showScreen('welcome-screen');
+  // Auto-start after brief pause so they can see the round number
+  setTimeout(() => startRound(), 500);
+}
+
+function newGame() {
+  cleanup();
+  state.roundNumber = 0;
+  state.usedListIndices = [];
+  state.usedLetters = [];
+  updateRoundInfo();
+  showScreen('welcome-screen');
+}
+
+function cleanup() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+  state.phase = 'idle';
+  if (state.speechAvailable) {
+    window.speechSynthesis.cancel();
+  }
+  $('status-banner').classList.remove('active');
+  $('letter-overlay').classList.remove('active');
+}
+
+// ===== HELPERS =====
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ===== STARTUP =====
+init();
+
+// Keep speech synthesis alive (Chrome workaround)
+setInterval(() => {
+  if (state.speechAvailable && window.speechSynthesis.speaking) {
+    window.speechSynthesis.resume();
+  }
+}, 5000);
+</script>
+
+</body>
+</html>
