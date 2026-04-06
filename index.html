@@ -727,6 +727,7 @@ const state = {
   phase: 'idle',
   currentLetter: '',
   currentCategories: [],
+  roundId: 0,
   revealedCount: 0,
   timerSeconds: CONFIG.TIMER_SECONDS,
   timerInterval: null,
@@ -899,6 +900,7 @@ async function startRound() {
   getAudioCtx();
 
   state.roundNumber++;
+  state.roundId++;
   state.phase = 'letter';
   state.revealedCount = 0;
   state.timerSeconds = CONFIG.TIMER_SECONDS;
@@ -941,13 +943,16 @@ async function startRound() {
   startTimer();
 
   // Reveal categories while timer is already running
-  await revealCategories(state.currentCategories);
+  const myRoundId = state.roundId;
+  await revealCategories(state.currentCategories, myRoundId);
 }
 
-async function revealCategories(categories) {
+async function revealCategories(categories, roundId) {
   for (let i = 0; i < categories.length; i++) {
+    if (state.roundId !== roundId) return;
     if (state.phase === 'timesup') return;
     await waitIfPaused();
+    if (state.roundId !== roundId) return;
     if (state.phase === 'timesup') return;
 
     const el = $(`cat-${i}`);
@@ -964,7 +969,7 @@ async function revealCategories(categories) {
     el.classList.remove('speaking');
 
     // Wait the interval before next — but not after last
-    if (i < categories.length - 1 && state.phase !== 'timesup') {
+    if (i < categories.length - 1 && state.phase !== 'timesup' && state.roundId === roundId) {
       await sleep(CONFIG.REVEAL_INTERVAL_MS);
     }
   }
