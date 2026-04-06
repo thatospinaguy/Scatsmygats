@@ -504,294 +504,231 @@ const CONFIG = {
   POST_REVEAL_PAUSE: 2000
 };
 
-// ===== CATEGORY LISTS =====
-// Mix of family-friendly classics and spicy adult-friendly categories.
-// Curated from Reddit, BoardGameGeek, and competitive forums.
-const CATEGORY_LISTS = [
-  {
-    name: "The Classic",
-    categories: [
-      "Animals",
-      "Boys' names",
-      "Things you shouldn't say on a first date",
-      "Countries",
-      "TV shows",
-      "Occupations",
-      "Reasons to be late",
-      "Things in a kitchen",
-      "Sports",
-      "Girls' names",
-      "Foods",
-      "Things that are cold"
-    ]
-  },
-  {
-    name: "After Hours",
-    categories: [
-      "Things you shout when you're angry",
-      "Excuses for not texting back",
-      "Celebrities you'd want at your dinner party",
-      "Things you'd buy if you won the lottery",
-      "Movie titles",
-      "Pizza toppings",
-      "Red flags in a relationship",
-      "Things in your search history",
-      "Fictional characters",
-      "Things people lie about",
-      "Fears or phobias",
-      "Guilty pleasures"
-    ]
-  },
-  {
-    name: "Debate Night",
-    categories: [
-      "Things that are sticky",
-      "Reasons to call in sick",
-      "Things you find in the ocean",
-      "Breakfast foods",
-      "Historical figures",
-      "Things at a birthday party",
-      "Words that describe your ex",
-      "Colours or shades",
-      "Hobbies",
-      "Things that smell bad",
-      "Things you'd grab in a zombie apocalypse",
-      "Desserts or sweet treats"
-    ]
-  },
-  {
-    name: "Around the World",
-    categories: [
-      "World cities",
-      "Things at a wedding",
-      "Fruits or vegetables",
-      "Things that fly",
-      "Drinks hot or cold",
-      "Landmarks or tourist spots",
-      "Snack foods",
-      "Languages or nationalities",
-      "Things you regret buying",
-      "Bodies of water",
-      "Musical instruments",
-      "Things tourists always do"
-    ]
-  },
-  {
-    name: "Game On",
-    categories: [
-      "Sports teams",
-      "Board games or card games",
-      "Things that bounce",
-      "Cartoon or animated characters",
-      "Things you pretend to like",
-      "Types of candy or chocolate",
-      "Nicknames you'd give your enemies",
-      "Things you do before bed",
-      "Restaurants or food chains",
-      "Things at a concert or festival",
-      "Olympic sports",
-      "Compliments that sound like insults"
-    ]
-  },
-  {
-    name: "Wild Card",
-    categories: [
-      "Three-syllable words",
-      "Things that melt",
-      "Animals at a zoo",
-      "Things you find in your pockets",
-      "Sounds or noises",
-      "Things in a suitcase",
-      "Types of vehicles",
-      "Things you'd wish for from a genie",
-      "Things at the beach",
-      "Things that come in pairs",
-      "Things you do when nobody's watching",
-      "Words associated with winter"
-    ]
-  },
-  {
-    name: "House Rules",
-    categories: [
-      "Things in a bathroom",
-      "Types of music or genres",
-      "Kitchen appliances or utensils",
-      "Things that grow",
-      "Things you find in the woods",
-      "Holidays or celebrations",
-      "Things in a toolbox or garage",
-      "Book titles or authors",
-      "Things that are sharp",
-      "Things you hoard",
-      "Things at a hospital",
-      "Terrible baby names"
-    ]
-  },
-  {
-    name: "Party Pack",
-    categories: [
-      "Things at a carnival or fair",
-      "Songs everyone knows",
-      "Things that glow or shine",
-      "Flowers, trees, or plants",
-      "Things you save up to buy",
-      "Scary things",
-      "Things you'd never say to your boss",
-      "Things made of wood",
-      "Things at a sleepover",
-      "Video games",
-      "Things that smell good",
-      "Things people do at parties that are annoying"
-    ]
-  },
-  {
-    name: "Rapid Fire",
-    categories: [
-      "Things you yell at the TV",
-      "Ice cream flavours",
-      "Famous duos or pairs",
-      "Camping gear",
-      "Things you do on a rainy day",
-      "Things at a coffee shop",
-      "Insects or bugs",
-      "Things that are overrated",
-      "Superhero names",
-      "Things that are soft",
-      "Things you put on toast",
-      "Worst things to say at a funeral"
-    ]
-  },
-  {
-    name: "Brain Buster",
-    categories: [
-      "Things in a museum",
-      "Words related to space",
-      "Things at a fancy dinner",
-      "Things you need a ticket for",
-      "Herbs or spices",
-      "Things that are loud",
-      "Things associated with royalty",
-      "Items in a junk drawer",
-      "Dance styles or moves",
-      "Types of shoes",
-      "Things you find at a garage sale",
-      "Things people are secretly afraid of"
-    ]
-  },
-  {
-    name: "Family Feud",
-    categories: [
-      "Things parents always say",
-      "Household chores nobody wants to do",
-      "Things in a lunchbox",
-      "Bedtime excuses",
-      "Things at a playground",
-      "Breakfast cereals",
-      "Things that are messy",
-      "Pets or pet breeds",
-      "Things you learn the hard way",
-      "Weekend activities",
-      "Things kids say that are accidentally savage",
-      "Clothing items"
-    ]
-  },
-  {
-    name: "Foodie Round",
-    categories: [
-      "Things on a burger",
-      "World cuisines",
-      "Things you grill",
-      "Bakery items",
-      "Things you dip",
-      "Street foods",
-      "Comfort foods",
-      "Things in a salad",
-      "Things you drink at a party",
-      "Cooking methods",
-      "Foods you eat with your hands",
-      "Things in your fridge that should be thrown out"
-    ]
-  },
-  {
-    name: "Pop Culture",
-    categories: [
-      "Movie villains",
-      "Things on a dating profile",
-      "One-hit wonders",
-      "Things in a superhero movie",
-      "Things that go viral",
-      "Reality TV shows",
-      "Things at an award show",
-      "Things fans argue about online",
-      "Things that are overpriced",
-      "Famous catchphrases",
-      "Things people binge-watch",
-      "Trends that need to die"
-    ]
-  },
-  {
-    name: "Great Outdoors",
-    categories: [
-      "Things you see on a hike",
-      "Types of fish",
-      "Things at a campfire",
-      "Birds",
-      "Things in a national park",
-      "Water sports or activities",
-      "Things that are green",
-      "Wild animals",
-      "Things you need sunscreen for",
-      "Outdoor games",
-      "Things you step on barefoot",
-      "Things people argue about on road trips"
-    ]
-  },
-  {
-    name: "Double Down",
-    categories: [
-      "Things that come in a box",
-      "Things you do in the morning",
-      "Things at a gas station",
-      "Things you whisper",
-      "Things that spin",
-      "Things associated with luck",
-      "Things in a waiting room",
-      "Things you lose constantly",
-      "Things that are heavy",
-      "Things you borrow but never return",
-      "Things that make you laugh",
-      "Things you pretend to understand"
-    ]
-  },
-  {
-    name: "Final Round",
-    categories: [
-      "Things that are red",
-      "Things you'd never Google at work",
-      "Things at a New Year's party",
-      "Things in a hotel room",
-      "Things that are free",
-      "Things you do with friends",
-      "Things that need batteries",
-      "Words associated with time",
-      "Things that are old-fashioned",
-      "Things you should never say at a job interview",
-      "Things that get better with age",
-      "Things you'd put in a time capsule"
-    ]
-  }
+// ===== CATEGORY POOL =====
+// One big shuffled pool. 12 random categories are drawn each round.
+const ALL_CATEGORIES = [
+  "Animals",
+  "Boys' names",
+  "Girls' names",
+  "Countries",
+  "TV shows",
+  "Occupations",
+  "Sports",
+  "Foods",
+  "Things that are cold",
+  "Things in a kitchen",
+  "Reasons to be late",
+  "Movie titles",
+  "Pizza toppings",
+  "Fictional characters",
+  "Fears or phobias",
+  "Guilty pleasures",
+  "Things you shout when you're angry",
+  "Excuses for not texting back",
+  "Celebrities you'd want at your dinner party",
+  "Things you'd buy if you won the lottery",
+  "Red flags in a relationship",
+  "Things in your search history",
+  "Things people lie about",
+  "Things you shouldn't say on a first date",
+  "Things that are sticky",
+  "Reasons to call in sick",
+  "Things you find in the ocean",
+  "Breakfast foods",
+  "Historical figures",
+  "Things at a birthday party",
+  "Words that describe your ex",
+  "Colours or shades",
+  "Hobbies",
+  "Things that smell bad",
+  "Things you'd grab in a zombie apocalypse",
+  "Desserts or sweet treats",
+  "World cities",
+  "Things at a wedding",
+  "Fruits or vegetables",
+  "Things that fly",
+  "Drinks hot or cold",
+  "Landmarks or tourist spots",
+  "Snack foods",
+  "Languages or nationalities",
+  "Things you regret buying",
+  "Bodies of water",
+  "Musical instruments",
+  "Things tourists always do",
+  "Sports teams",
+  "Board games or card games",
+  "Things that bounce",
+  "Cartoon or animated characters",
+  "Things you pretend to like",
+  "Types of candy or chocolate",
+  "Nicknames you'd give your enemies",
+  "Things you do before bed",
+  "Restaurants or food chains",
+  "Things at a concert or festival",
+  "Olympic sports",
+  "Compliments that sound like insults",
+  "Three-syllable words",
+  "Things that melt",
+  "Animals at a zoo",
+  "Things you find in your pockets",
+  "Sounds or noises",
+  "Things in a suitcase",
+  "Types of vehicles",
+  "Things you'd wish for from a genie",
+  "Things at the beach",
+  "Things that come in pairs",
+  "Things you do when nobody's watching",
+  "Words associated with winter",
+  "Things in a bathroom",
+  "Types of music or genres",
+  "Kitchen appliances or utensils",
+  "Things that grow",
+  "Things you find in the woods",
+  "Holidays or celebrations",
+  "Things in a toolbox or garage",
+  "Book titles or authors",
+  "Things that are sharp",
+  "Things you hoard",
+  "Things at a hospital",
+  "Terrible baby names",
+  "Things at a carnival or fair",
+  "Songs everyone knows",
+  "Things that glow or shine",
+  "Flowers, trees, or plants",
+  "Things you save up to buy",
+  "Scary things",
+  "Things you'd never say to your boss",
+  "Things made of wood",
+  "Things at a sleepover",
+  "Video games",
+  "Things that smell good",
+  "Things people do at parties that are annoying",
+  "Things you yell at the TV",
+  "Ice cream flavours",
+  "Famous duos or pairs",
+  "Camping gear",
+  "Things you do on a rainy day",
+  "Things at a coffee shop",
+  "Insects or bugs",
+  "Things that are overrated",
+  "Superhero names",
+  "Things that are soft",
+  "Things you put on toast",
+  "Worst things to say at a funeral",
+  "Things in a museum",
+  "Words related to space",
+  "Things at a fancy dinner",
+  "Things you need a ticket for",
+  "Herbs or spices",
+  "Things that are loud",
+  "Things associated with royalty",
+  "Items in a junk drawer",
+  "Dance styles or moves",
+  "Types of shoes",
+  "Things you find at a garage sale",
+  "Things people are secretly afraid of",
+  "Things parents always say",
+  "Household chores nobody wants to do",
+  "Things in a lunchbox",
+  "Bedtime excuses",
+  "Things at a playground",
+  "Breakfast cereals",
+  "Things that are messy",
+  "Pets or pet breeds",
+  "Things you learn the hard way",
+  "Weekend activities",
+  "Things kids say that are accidentally savage",
+  "Clothing items",
+  "Things on a burger",
+  "World cuisines",
+  "Things you grill",
+  "Bakery items",
+  "Things you dip",
+  "Street foods",
+  "Comfort foods",
+  "Things in a salad",
+  "Things you drink at a party",
+  "Cooking methods",
+  "Foods you eat with your hands",
+  "Things in your fridge that should be thrown out",
+  "Movie villains",
+  "Things on a dating profile",
+  "One-hit wonders",
+  "Things in a superhero movie",
+  "Things that go viral",
+  "Reality TV shows",
+  "Things at an award show",
+  "Things fans argue about online",
+  "Things that are overpriced",
+  "Famous catchphrases",
+  "Things people binge-watch",
+  "Trends that need to die",
+  "Things you see on a hike",
+  "Types of fish",
+  "Things at a campfire",
+  "Birds",
+  "Things in a national park",
+  "Water sports or activities",
+  "Things that are green",
+  "Wild animals",
+  "Things you need sunscreen for",
+  "Outdoor games",
+  "Things you step on barefoot",
+  "Things people argue about on road trips",
+  "Things that come in a box",
+  "Things you do in the morning",
+  "Things at a gas station",
+  "Things you whisper",
+  "Things that spin",
+  "Things associated with luck",
+  "Things in a waiting room",
+  "Things you lose constantly",
+  "Things that are heavy",
+  "Things you borrow but never return",
+  "Things that make you laugh",
+  "Things you pretend to understand",
+  "Things that are red",
+  "Things you'd never Google at work",
+  "Things at a New Year's party",
+  "Things in a hotel room",
+  "Things that are free",
+  "Things you do with friends",
+  "Things that need batteries",
+  "Words associated with time",
+  "Things that are old-fashioned",
+  "Things you should never say at a job interview",
+  "Things that get better with age",
+  "Things you'd put in a time capsule"
 ];
+
+// Shuffle helper
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Draw 12 random categories, no repeats until pool is exhausted
+let categoryPool = [];
+function drawCategories() {
+  if (categoryPool.length < CONFIG.CATEGORIES_PER_ROUND) {
+    categoryPool = shuffleArray(ALL_CATEGORIES);
+  }
+  return categoryPool.splice(0, CONFIG.CATEGORIES_PER_ROUND);
+}
 
 // ===== GAME STATE =====
 const state = {
   phase: 'idle',
   currentLetter: '',
-  currentListIndex: -1,
+  currentCategories: [],
   revealedCount: 0,
   timerSeconds: CONFIG.TIMER_SECONDS,
   timerInterval: null,
   revealTimeout: null,
-  usedListIndices: [],
   usedLetters: [],
   roundNumber: 0,
   audioCtx: null,
@@ -944,21 +881,6 @@ function pickRandomLetter() {
   return letter;
 }
 
-// ===== LIST SELECTION =====
-function pickCategoryList() {
-  let available = [];
-  for (let i = 0; i < CATEGORY_LISTS.length; i++) {
-    if (!state.usedListIndices.includes(i)) available.push(i);
-  }
-  if (available.length === 0) {
-    state.usedListIndices = [];
-    available = CATEGORY_LISTS.map((_, i) => i);
-  }
-  const idx = available[Math.floor(Math.random() * available.length)];
-  state.usedListIndices.push(idx);
-  return idx;
-}
-
 // ===== SCREEN MANAGEMENT =====
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -979,21 +901,20 @@ async function startRound() {
   state.revealedCount = 0;
   state.timerSeconds = CONFIG.TIMER_SECONDS;
 
-  // Pick letter and list
+  // Pick letter and draw random categories
   state.currentLetter = pickRandomLetter();
-  state.currentListIndex = pickCategoryList();
-  const list = CATEGORY_LISTS[state.currentListIndex];
+  state.currentCategories = drawCategories();
 
   // Setup game screen
   $('game-letter').textContent = state.currentLetter;
-  $('game-round-badge').textContent = `Round ${state.roundNumber} \u00B7 ${list.name}`;
+  $('game-round-badge').textContent = `Round ${state.roundNumber}`;
   $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
   $('timer-display').className = 'timer-display timer-green';
 
   // Build category slots
   const catList = $('category-list');
   catList.innerHTML = '';
-  list.categories.forEach((cat, i) => {
+  state.currentCategories.forEach((cat, i) => {
     const div = document.createElement('div');
     div.className = 'category-item';
     div.id = `cat-${i}`;
@@ -1018,7 +939,7 @@ async function startRound() {
   startTimer();
 
   // Reveal categories while timer is already running
-  await revealCategories(list.categories);
+  await revealCategories(state.currentCategories);
 }
 
 async function revealCategories(categories) {
@@ -1096,8 +1017,7 @@ async function timesUp() {
   $('roundover-letter').textContent = state.currentLetter;
   const container = $('roundover-categories');
   container.innerHTML = '';
-  const list = CATEGORY_LISTS[state.currentListIndex];
-  list.categories.forEach((cat, i) => {
+  state.currentCategories.forEach((cat, i) => {
     const div = document.createElement('div');
     div.className = 'roundover-category';
     div.innerHTML = `<span class="category-num">${i + 1}</span><span class="category-text">${cat}</span>`;
@@ -1118,8 +1038,8 @@ function nextRound() {
 function newGame() {
   cleanup();
   state.roundNumber = 0;
-  state.usedListIndices = [];
   state.usedLetters = [];
+  categoryPool = [];
   updateRoundInfo();
   showScreen('welcome-screen');
 }
