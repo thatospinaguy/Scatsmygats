@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Scattergories Eh!</title>
+  <title>Scattergories!</title>
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -386,14 +386,13 @@
 </head>
 <body>
 
-  <!-- MAPLE LEAF SVG (watermark) -->
   <div id="welcome-screen" class="screen active">
     <svg class="maple-leaf-bg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 5 L53 20 L65 12 L60 25 L75 22 L65 33 L80 35 L66 42 L78 55 L62 50 L65 65 L55 55 L50 70 L45 55 L35 65 L38 50 L22 55 L34 42 L20 35 L35 33 L25 22 L40 25 L35 12 L47 20 Z" fill="currentColor"/>
+      <polygon points="50,5 61,35 95,35 67,57 78,90 50,70 22,90 33,57 5,35 39,35" fill="currentColor"/>
     </svg>
     <div class="welcome-content">
-      <h1 class="game-title">Scattergories Eh!</h1>
-      <p class="game-subtitle">Canadian Family Edition</p>
+      <h1 class="game-title">Scattergories!</h1>
+      <p class="game-subtitle">Family Game Night Edition</p>
       <div class="round-info" id="round-info">Round 1</div>
       <button class="btn btn-primary" id="btn-start" onclick="startRound()">Start Round</button>
       <p class="speech-notice" id="speech-notice">Speech not available — visual mode only</p>
@@ -446,141 +445,279 @@ const CONFIG = {
 };
 
 // ===== CATEGORY LISTS =====
+// Curated from Reddit, BoardGameGeek, and competitive Scattergories forums.
+// Designed for maximum debate, fun, and universal playability.
 const CATEGORY_LISTS = [
   {
-    name: "The Classic Eh",
+    name: "The Classic",
     categories: [
-      "A Canadian city or town",
       "Animals",
-      "Things found in a kitchen",
-      "Famous Canadians",
-      "Foods you eat at a BBQ",
-      "School subjects",
-      "Things that are cold",
       "Boys' names",
-      "Sports",
-      "Things you find at a lake",
-      "Reasons to be late",
-      "Items in a grocery store"
-    ]
-  },
-  {
-    name: "Coast to Coast",
-    categories: [
-      "A province or territory",
+      "Foods",
+      "Countries",
       "TV shows",
-      "Things in a park",
+      "Things that are cold",
       "Occupations",
-      "Fruits or vegetables",
-      "Things that are round",
-      "Musical instruments or genres",
-      "Excuses for not doing homework",
-      "Things at a hockey rink",
       "Clothing items",
-      "Pizza toppings",
+      "Reasons to be late",
+      "Sports",
+      "Things in a kitchen",
       "Girls' names"
     ]
   },
   {
-    name: "True North",
+    name: "Fan Favourite",
     categories: [
-      "Canadian landmarks or natural wonders",
+      "Things you shout",
+      "Pizza toppings",
+      "Fictional characters",
+      "Excuses for not doing homework",
+      "Musical artists or bands",
       "Things in a backpack",
       "Desserts or sweet treats",
-      "Types of vehicles",
-      "Animals found in Canada",
-      "Things you shout",
+      "Celebrities",
+      "Things that are round",
+      "Fears or phobias",
+      "School subjects",
+      "Items at a grocery store"
+    ]
+  },
+  {
+    name: "Debate Night",
+    categories: [
+      "Things that are sticky",
+      "Movie titles",
+      "Reasons to call in sick",
+      "Things you find in the ocean",
+      "Words that describe personality",
       "Breakfast foods",
-      "Book or movie titles",
-      "Things made of wood",
-      "Hobbies",
+      "Historical figures",
       "Things at a birthday party",
-      "Words associated with winter"
+      "Colours or shades",
+      "Something a teacher would say",
+      "Hobbies",
+      "Things that smell bad"
+    ]
+  },
+  {
+    name: "Around the World",
+    categories: [
+      "World cities",
+      "Things at a wedding",
+      "Fruits or vegetables",
+      "Things that fly",
+      "Drinks hot or cold",
+      "Landmarks or tourist spots",
+      "Snack foods",
+      "Languages or nationalities",
+      "Things you take on vacation",
+      "Bodies of water",
+      "Musical instruments",
+      "Things at a market"
+    ]
+  },
+  {
+    name: "Game On",
+    categories: [
+      "Sports teams",
+      "Board games or card games",
+      "Things that bounce",
+      "Cartoon or animated characters",
+      "Things in a gym or on a field",
+      "Types of candy or chocolate",
+      "Nicknames or pet names",
+      "Things you do before bed",
+      "Restaurants or food chains",
+      "Things at a concert or festival",
+      "Olympic sports",
+      "Compliments you give someone"
+    ]
+  },
+  {
+    name: "The Wild Card",
+    categories: [
+      "Three-syllable words",
+      "Things that melt",
+      "Animals at a zoo",
+      "Things you find in your pockets",
+      "Sounds or noises",
+      "Things in a suitcase",
+      "Types of vehicles",
+      "Something you would wish for",
+      "Things at the beach",
+      "Words associated with winter",
+      "Things that come in pairs",
+      "Guilty pleasures"
+    ]
+  },
+  {
+    name: "House Rules",
+    categories: [
+      "Things in a bathroom",
+      "Types of music or genres",
+      "Kitchen appliances or utensils",
+      "Things that grow",
+      "Things you find in the woods",
+      "Holidays or celebrations",
+      "Things in a toolbox or garage",
+      "Book titles or authors",
+      "Things that are sharp",
+      "Baby items",
+      "Things at a hospital",
+      "Farm animals or farm things"
+    ]
+  },
+  {
+    name: "Party Pack",
+    categories: [
+      "Things at a carnival or fair",
+      "Songs everyone knows",
+      "Things that glow or shine",
+      "Flowers, trees, or plants",
+      "Things you save up to buy",
+      "Scary things",
+      "Types of weather",
+      "Things made of wood",
+      "Things at a sleepover",
+      "Video games",
+      "Things that smell good",
+      "Awards or achievements"
+    ]
+  },
+  {
+    name: "Rapid Fire",
+    categories: [
+      "Things in a classroom",
+      "Things you yell at the TV",
+      "Ice cream flavours",
+      "Famous duos or pairs",
+      "Camping gear",
+      "Things you do on a rainy day",
+      "Things at a coffee shop",
+      "Insects or bugs",
+      "Superhero names",
+      "Places you hide things",
+      "Things that are soft",
+      "Things you put on toast"
+    ]
+  },
+  {
+    name: "Brain Buster",
+    categories: [
+      "Things in a museum",
+      "Words related to space",
+      "Things at a fancy dinner",
+      "Things you need a ticket for",
+      "Herbs or spices",
+      "Things that are loud",
+      "Things associated with royalty",
+      "Items in a junk drawer",
+      "Things you do on a snow day",
+      "Dance styles or moves",
+      "Types of shoes",
+      "Things you find at a garage sale"
+    ]
+  },
+  {
+    name: "Family Feud",
+    categories: [
+      "Things parents always say",
+      "Things kids love",
+      "Things in a lunchbox",
+      "Household chores",
+      "Bedtime excuses",
+      "Things at a playground",
+      "Breakfast cereals",
+      "Things that are messy",
+      "Pets or pet breeds",
+      "Things in a toy box",
+      "Things you learn in school",
+      "Weekend activities"
+    ]
+  },
+  {
+    name: "Foodie Round",
+    categories: [
+      "Things on a burger",
+      "World cuisines",
+      "Things you grill",
+      "Bakery items",
+      "Things you dip",
+      "Street foods",
+      "Comfort foods",
+      "Things in a salad",
+      "Spicy foods",
+      "Things you drink in summer",
+      "Cooking methods",
+      "Foods you eat with your hands"
+    ]
+  },
+  {
+    name: "Pop Culture",
+    categories: [
+      "Movie villains",
+      "Things on a dating profile",
+      "One-hit wonders",
+      "Things in a superhero movie",
+      "Famous last words",
+      "Things that go viral",
+      "Reality TV shows",
+      "Things at an award show",
+      "Song lyrics everyone gets wrong",
+      "Iconic movie quotes (one word)",
+      "Things fans argue about",
+      "Things that are overrated"
     ]
   },
   {
     name: "The Great Outdoors",
     categories: [
-      "Camping gear",
-      "Canadian lakes, rivers, or mountains",
-      "Things that fly",
-      "Restaurants or food chains",
-      "Something you are afraid of",
-      "Games or toys",
-      "Things in a bathroom",
-      "Types of music",
-      "Things at a wedding",
-      "Colours or shades",
-      "Holiday or celebration items",
-      "Athletes or sports teams"
+      "Things you see on a hike",
+      "Types of fish",
+      "Things at a campfire",
+      "Birds",
+      "Things in a national park",
+      "Water sports or activities",
+      "Things that are green",
+      "Wild animals",
+      "Things you need sunscreen for",
+      "Types of clouds or weather",
+      "Things you find on a beach walk",
+      "Outdoor games"
     ]
   },
   {
-    name: "Around Town",
+    name: "Double Down",
     categories: [
-      "Things in a mall or store",
-      "Songs or bands",
-      "Things that grow",
-      "Types of weather",
-      "Nicknames or pet names",
-      "Things in a toolbox or garage",
-      "Snack foods",
-      "Places you go on vacation",
-      "Words that describe personality",
-      "Things you find in the woods",
-      "Kitchen appliances or utensils",
-      "Canadian foods or drinks"
+      "Things that come in a box",
+      "Things you do in the morning",
+      "Things at a gas station",
+      "Types of bags",
+      "Things you whisper",
+      "Things that spin",
+      "Things associated with luck",
+      "Things in a waiting room",
+      "Things you lose",
+      "Things that are heavy",
+      "Things you borrow but never return",
+      "Things that make you laugh"
     ]
   },
   {
-    name: "Family Night",
+    name: "Final Round",
     categories: [
-      "Board games or card games",
-      "Things at a carnival or fair",
-      "Types of candy or chocolate",
-      "Something a teacher would say",
-      "Things in a hospital",
-      "Bodies of water worldwide",
-      "Things that are sticky",
-      "Cartoon or animated characters",
-      "Things you do before bed",
-      "Things at the beach",
-      "Canadian slang or expressions",
-      "Farm animals or farm things"
-    ]
-  },
-  {
-    name: "Northern Lights",
-    categories: [
-      "Things that glow or shine",
-      "Historical figures",
-      "Things in a classroom",
-      "Drinks hot or cold",
-      "Things associated with Canada",
-      "Things at a concert or festival",
-      "Scary things",
-      "Flowers, trees, or plants",
-      "Things in a suitcase",
-      "Awards, trophies, or achievements",
-      "Sounds or noises",
-      "Things at a Tim Hortons"
-    ]
-  },
-  {
-    name: "Playoff Round",
-    categories: [
-      "Things you find in the ocean",
-      "Fictional characters",
-      "Things in a museum",
-      "Three-syllable words",
-      "Things that smell good",
-      "Canadian wildlife",
-      "Things that bounce",
-      "Words related to space",
-      "Things at a sleepover",
-      "Things that melt",
-      "Things you save up to buy",
-      "Compliments you give someone"
+      "Things that are red",
+      "Things you Google",
+      "Things at a New Year's party",
+      "Professions kids want to be",
+      "Things in a hotel room",
+      "Things that are free",
+      "Things you do with friends",
+      "Things that need batteries",
+      "Words associated with time",
+      "Things you put in your hair",
+      "Things that are old-fashioned",
+      "Things you should never say at a job interview"
     ]
   }
 ];
