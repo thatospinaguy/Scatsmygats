@@ -179,6 +179,56 @@
     .timer-yellow { color: var(--timer-yellow); }
     .timer-red { color: var(--timer-red); animation: pulse 0.8s ease-in-out infinite; }
 
+    .pause-btn {
+      background: var(--bg-card);
+      border: 2px solid var(--card-border);
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .pause-btn:active {
+      transform: scale(0.9);
+    }
+
+    .pause-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 35, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      gap: 1.5rem;
+    }
+
+    .pause-overlay.active {
+      display: flex;
+    }
+
+    .pause-overlay-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+    }
+
+    .pause-overlay-timer {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--timer-yellow);
+      font-variant-numeric: tabular-nums;
+    }
+
     .round-badge {
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -406,10 +456,20 @@
         <div class="letter-display" id="game-letter">A</div>
         <div class="round-badge" id="game-round-badge">Round 1 &middot; List 1</div>
       </div>
-      <div class="timer-display timer-green" id="timer-display">3:00</div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="timer-display timer-green" id="timer-display">3:00</div>
+        <button class="pause-btn" id="pause-btn" onclick="togglePause()">&#9646;&#9646;</button>
+      </div>
     </div>
     <div class="status-banner" id="status-banner">Revealing categories...</div>
     <div class="category-list" id="category-list"></div>
+  </div>
+
+  <!-- PAUSE OVERLAY -->
+  <div class="pause-overlay" id="pause-overlay">
+    <div class="pause-overlay-title">Paused</div>
+    <div class="pause-overlay-timer" id="pause-timer-display">3:00</div>
+    <button class="btn btn-primary" onclick="togglePause()">Resume</button>
   </div>
 
   <!-- LETTER ANNOUNCE OVERLAY -->
@@ -435,7 +495,7 @@
 <script>
 // ===== CONFIGURATION =====
 const CONFIG = {
-  REVEAL_INTERVAL_MS: 10000,
+  REVEAL_INTERVAL_MS: 15000,
   TIMER_SECONDS: 180,
   WARNING_SECONDS: 30,
   ELIGIBLE_LETTERS: 'ABCDEFGHIJKLMNOPRSTUVWY',
@@ -735,7 +795,9 @@ const state = {
   usedLetters: [],
   roundNumber: 0,
   audioCtx: null,
-  speechAvailable: false
+  speechAvailable: false,
+  paused: false,
+  pauseResolve: null
 };
 
 // ===== DOM REFS =====
@@ -962,6 +1024,8 @@ async function startRound() {
 async function revealCategories(categories) {
   for (let i = 0; i < categories.length; i++) {
     if (state.phase === 'timesup') return;
+    await waitIfPaused();
+    if (state.phase === 'timesup') return;
 
     const el = $(`cat-${i}`);
     el.classList.add('revealed', 'speaking');
@@ -1066,11 +1130,78 @@ function cleanup() {
     state.timerInterval = null;
   }
   state.phase = 'idle';
+  state.paused = false;
+  if (state.pauseResolve) {
+    state.pauseResolve();
+    state.pauseResolve = null;
+  }
   if (state.speechAvailable) {
     window.speechSynthesis.cancel();
   }
   $('status-banner').classList.remove('active');
   $('letter-overlay').classList.remove('active');
+  $('pause-overlay').classList.remove('active');
+}
+
+// ===== PAUSE =====
+function togglePause() {
+  if (state.phase === 'timesup' || state.phase === 'idle') return;
+
+  if (state.paused) {
+    // RESUME
+    state.paused = false;
+    $('pause-overlay').classList.remove('active');
+
+    // Restart the timer interval
+    state.timerInterval = setInterval(() => {
+      state.timerSeconds--;
+      updateTimerDisplay();
+      if (state.timerSeconds === CONFIG.WARNING_SECONDS) {
+        playWarningTone();
+        speak('30 seconds remaining');
+      }
+      if (state.timerSeconds <= 10 && state.timerSeconds > 0) {
+        playTickSound();
+      }
+      if (state.timerSeconds <= 0) {
+        timesUp();
+      }
+    }, 1000);
+
+    // Resume speech
+    if (state.speechAvailable) {
+      window.speechSynthesis.resume();
+    }
+
+    // Unblock the reveal loop
+    if (state.pauseResolve) {
+      state.pauseResolve();
+      state.pauseResolve = null;
+    }
+  } else {
+    // PAUSE
+    state.paused = true;
+    $('pause-timer-display').textContent = formatTime(state.timerSeconds);
+    $('pause-overlay').classList.add('active');
+
+    // Stop the timer interval
+    if (state.timerInterval) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+    }
+
+    // Pause speech
+    if (state.speechAvailable) {
+      window.speechSynthesis.pause();
+    }
+  }
+}
+
+function waitIfPaused() {
+  if (!state.paused) return Promise.resolve();
+  return new Promise(resolve => {
+    state.pauseResolve = resolve;
+  });
 }
 
 // ===== HELPERS =====
@@ -1081,7 +1212,17 @@ function formatTime(seconds) {
 }
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => {
+    const check = () => {
+      if (state.paused) {
+        // Wait for unpause, then sleep remaining
+        waitIfPaused().then(() => setTimeout(resolve, ms));
+      } else {
+        setTimeout(resolve, ms);
+      }
+    };
+    check();
+  });
 }
 
 // ===== STARTUP =====
