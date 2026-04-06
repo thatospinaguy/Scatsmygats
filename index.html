@@ -470,6 +470,8 @@
     <div class="pause-overlay-title">Paused</div>
     <div class="pause-overlay-timer" id="pause-timer-display">3:00</div>
     <button class="btn btn-primary" onclick="togglePause()">Resume</button>
+    <button class="btn btn-secondary" onclick="restartRound()">Restart Round</button>
+    <button class="btn btn-secondary" onclick="newGame()">New Game</button>
   </div>
 
   <!-- LETTER ANNOUNCE OVERLAY -->
@@ -1033,6 +1035,13 @@ function nextRound() {
   showScreen('welcome-screen');
   // Auto-start after brief pause so they can see the round number
   setTimeout(() => startRound(), 500);
+}
+
+function restartRound() {
+  cleanup();
+  state.roundNumber--;
+  showScreen('welcome-screen');
+  setTimeout(() => startRound(), 300);
 }
 
 function newGame() {
