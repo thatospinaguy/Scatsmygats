@@ -336,6 +336,12 @@
       overflow-y: auto;
     }
 
+    .roundover-categories.hidden-cats .roundover-category .category-text {
+      filter: blur(8px);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     .roundover-category {
       display: flex;
       align-items: center;
@@ -345,6 +351,7 @@
       background: var(--bg-card);
       border: 1px solid var(--card-border);
       border-radius: 10px;
+      transition: filter 0.2s;
     }
 
     .roundover-buttons {
@@ -487,9 +494,10 @@
       <div class="timesup-subtitle">Pencils Down!</div>
       <div class="roundover-letter" id="roundover-letter">A</div>
     </div>
-    <div class="roundover-categories" id="roundover-categories"></div>
+    <div class="roundover-categories hidden-cats" id="roundover-categories"></div>
     <div class="roundover-buttons">
-      <button class="btn btn-primary" onclick="nextRound()">Next Round</button>
+      <button class="btn btn-primary" id="toggle-categories-btn" onclick="toggleCategories()">Show Categories</button>
+      <button class="btn btn-secondary" onclick="nextRound()">Next Round</button>
       <button class="btn btn-secondary" onclick="newGame()">New Game</button>
     </div>
   </div>
@@ -1020,10 +1028,12 @@ async function timesUp() {
   await sleep(300);
   await speak("Time's up! Pencils down!");
 
-  // Build round-over screen
+  // Build round-over screen — categories hidden by default
   $('roundover-letter').textContent = state.currentLetter;
   const container = $('roundover-categories');
   container.innerHTML = '';
+  container.classList.add('hidden-cats');
+  $('toggle-categories-btn').textContent = 'Show Categories';
   state.currentCategories.forEach((cat, i) => {
     const div = document.createElement('div');
     div.className = 'roundover-category';
@@ -1032,6 +1042,13 @@ async function timesUp() {
   });
 
   showScreen('roundover-screen');
+}
+
+function toggleCategories() {
+  const container = $('roundover-categories');
+  const btn = $('toggle-categories-btn');
+  container.classList.toggle('hidden-cats');
+  btn.textContent = container.classList.contains('hidden-cats') ? 'Show Categories' : 'Hide Categories';
 }
 
 function nextRound() {
