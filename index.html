@@ -925,7 +925,7 @@ async function startRound() {
   // Setup game screen
   $('game-letter').textContent = state.currentLetter;
   $('game-round-badge').textContent = `Round ${state.roundNumber} \u00B7 ${list.name}`;
-  $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
+  $('timer-display').textContent = '0 / 12';
   $('timer-display').className = 'timer-display timer-green';
 
   // Build category slots
@@ -962,6 +962,8 @@ async function startRound() {
 
   // All categories revealed
   banner.textContent = 'Your 3 minutes start now!';
+  $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
+  $('timer-display').className = 'timer-display timer-green';
   await speak('Your 3 minutes start now!');
   await sleep(1000);
   banner.classList.remove('active');
@@ -978,6 +980,9 @@ async function revealCategories(categories) {
     const el = $(`cat-${i}`);
     el.classList.add('revealed', 'speaking');
     state.revealedCount = i + 1;
+
+    // Update the counter display during reveals
+    $('timer-display').textContent = `${i + 1} / 12`;
 
     // Scroll to revealed category
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
