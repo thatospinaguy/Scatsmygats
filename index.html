@@ -243,6 +243,12 @@
       overflow-y: auto;
     }
 
+    .category-list.blurred .category-item .category-text {
+      filter: blur(8px);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     .category-item {
       display: flex;
       align-items: center;
@@ -1102,6 +1108,7 @@ function togglePause() {
     // RESUME
     state.paused = false;
     $('pause-overlay').classList.remove('active');
+    $('category-list').classList.remove('blurred');
 
     // Restart the timer interval
     state.timerInterval = setInterval(() => {
@@ -1134,6 +1141,7 @@ function togglePause() {
     state.paused = true;
     $('pause-timer-display').textContent = formatTime(state.timerSeconds);
     $('pause-overlay').classList.add('active');
+    $('category-list').classList.add('blurred');
 
     // Stop the timer interval
     if (state.timerInterval) {
