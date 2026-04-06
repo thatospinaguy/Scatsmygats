@@ -392,7 +392,7 @@
     </svg>
     <div class="welcome-content">
       <h1 class="game-title">Scattergories!</h1>
-      <p class="game-subtitle">Family Game Night Edition</p>
+      <p class="game-subtitle">Family &amp; Friends Edition</p>
       <div class="round-info" id="round-info">Round 1</div>
       <button class="btn btn-primary" id="btn-start" onclick="startRound()">Start Round</button>
       <p class="speech-notice" id="speech-notice">Speech not available — visual mode only</p>
@@ -435,7 +435,7 @@
 <script>
 // ===== CONFIGURATION =====
 const CONFIG = {
-  REVEAL_INTERVAL_MS: 15000,
+  REVEAL_INTERVAL_MS: 10000,
   TIMER_SECONDS: 180,
   WARNING_SECONDS: 30,
   ELIGIBLE_LETTERS: 'ABCDEFGHIJKLMNOPRSTUVWY',
@@ -445,58 +445,58 @@ const CONFIG = {
 };
 
 // ===== CATEGORY LISTS =====
-// Curated from Reddit, BoardGameGeek, and competitive Scattergories forums.
-// Designed for maximum debate, fun, and universal playability.
+// Mix of family-friendly classics and spicy adult-friendly categories.
+// Curated from Reddit, BoardGameGeek, and competitive forums.
 const CATEGORY_LISTS = [
   {
     name: "The Classic",
     categories: [
       "Animals",
       "Boys' names",
-      "Foods",
+      "Things you shouldn't say on a first date",
       "Countries",
       "TV shows",
-      "Things that are cold",
       "Occupations",
-      "Clothing items",
       "Reasons to be late",
-      "Sports",
       "Things in a kitchen",
-      "Girls' names"
+      "Sports",
+      "Girls' names",
+      "Foods",
+      "Things that are cold"
     ]
   },
   {
-    name: "Fan Favourite",
+    name: "After Hours",
     categories: [
-      "Things you shout",
+      "Things you shout when you're angry",
+      "Excuses for not texting back",
+      "Celebrities you'd want at your dinner party",
+      "Things you'd buy if you won the lottery",
+      "Movie titles",
       "Pizza toppings",
+      "Red flags in a relationship",
+      "Things in your search history",
       "Fictional characters",
-      "Excuses for not doing homework",
-      "Musical artists or bands",
-      "Things in a backpack",
-      "Desserts or sweet treats",
-      "Celebrities",
-      "Things that are round",
+      "Things people lie about",
       "Fears or phobias",
-      "School subjects",
-      "Items at a grocery store"
+      "Guilty pleasures"
     ]
   },
   {
     name: "Debate Night",
     categories: [
       "Things that are sticky",
-      "Movie titles",
       "Reasons to call in sick",
       "Things you find in the ocean",
-      "Words that describe personality",
       "Breakfast foods",
       "Historical figures",
       "Things at a birthday party",
+      "Words that describe your ex",
       "Colours or shades",
-      "Something a teacher would say",
       "Hobbies",
-      "Things that smell bad"
+      "Things that smell bad",
+      "Things you'd grab in a zombie apocalypse",
+      "Desserts or sweet treats"
     ]
   },
   {
@@ -510,10 +510,10 @@ const CATEGORY_LISTS = [
       "Landmarks or tourist spots",
       "Snack foods",
       "Languages or nationalities",
-      "Things you take on vacation",
+      "Things you regret buying",
       "Bodies of water",
       "Musical instruments",
-      "Things at a market"
+      "Things tourists always do"
     ]
   },
   {
@@ -523,18 +523,18 @@ const CATEGORY_LISTS = [
       "Board games or card games",
       "Things that bounce",
       "Cartoon or animated characters",
-      "Things in a gym or on a field",
+      "Things you pretend to like",
       "Types of candy or chocolate",
-      "Nicknames or pet names",
+      "Nicknames you'd give your enemies",
       "Things you do before bed",
       "Restaurants or food chains",
       "Things at a concert or festival",
       "Olympic sports",
-      "Compliments you give someone"
+      "Compliments that sound like insults"
     ]
   },
   {
-    name: "The Wild Card",
+    name: "Wild Card",
     categories: [
       "Three-syllable words",
       "Things that melt",
@@ -543,11 +543,11 @@ const CATEGORY_LISTS = [
       "Sounds or noises",
       "Things in a suitcase",
       "Types of vehicles",
-      "Something you would wish for",
+      "Things you'd wish for from a genie",
       "Things at the beach",
-      "Words associated with winter",
       "Things that come in pairs",
-      "Guilty pleasures"
+      "Things you do when nobody's watching",
+      "Words associated with winter"
     ]
   },
   {
@@ -562,9 +562,9 @@ const CATEGORY_LISTS = [
       "Things in a toolbox or garage",
       "Book titles or authors",
       "Things that are sharp",
-      "Baby items",
+      "Things you hoard",
       "Things at a hospital",
-      "Farm animals or farm things"
+      "Terrible baby names"
     ]
   },
   {
@@ -576,18 +576,17 @@ const CATEGORY_LISTS = [
       "Flowers, trees, or plants",
       "Things you save up to buy",
       "Scary things",
-      "Types of weather",
+      "Things you'd never say to your boss",
       "Things made of wood",
       "Things at a sleepover",
       "Video games",
       "Things that smell good",
-      "Awards or achievements"
+      "Things people do at parties that are annoying"
     ]
   },
   {
     name: "Rapid Fire",
     categories: [
-      "Things in a classroom",
       "Things you yell at the TV",
       "Ice cream flavours",
       "Famous duos or pairs",
@@ -595,10 +594,11 @@ const CATEGORY_LISTS = [
       "Things you do on a rainy day",
       "Things at a coffee shop",
       "Insects or bugs",
+      "Things that are overrated",
       "Superhero names",
-      "Places you hide things",
       "Things that are soft",
-      "Things you put on toast"
+      "Things you put on toast",
+      "Worst things to say at a funeral"
     ]
   },
   {
@@ -612,27 +612,27 @@ const CATEGORY_LISTS = [
       "Things that are loud",
       "Things associated with royalty",
       "Items in a junk drawer",
-      "Things you do on a snow day",
       "Dance styles or moves",
       "Types of shoes",
-      "Things you find at a garage sale"
+      "Things you find at a garage sale",
+      "Things people are secretly afraid of"
     ]
   },
   {
     name: "Family Feud",
     categories: [
       "Things parents always say",
-      "Things kids love",
+      "Household chores nobody wants to do",
       "Things in a lunchbox",
-      "Household chores",
       "Bedtime excuses",
       "Things at a playground",
       "Breakfast cereals",
       "Things that are messy",
       "Pets or pet breeds",
-      "Things in a toy box",
-      "Things you learn in school",
-      "Weekend activities"
+      "Things you learn the hard way",
+      "Weekend activities",
+      "Things kids say that are accidentally savage",
+      "Clothing items"
     ]
   },
   {
@@ -646,10 +646,10 @@ const CATEGORY_LISTS = [
       "Street foods",
       "Comfort foods",
       "Things in a salad",
-      "Spicy foods",
-      "Things you drink in summer",
+      "Things you drink at a party",
       "Cooking methods",
-      "Foods you eat with your hands"
+      "Foods you eat with your hands",
+      "Things in your fridge that should be thrown out"
     ]
   },
   {
@@ -659,18 +659,18 @@ const CATEGORY_LISTS = [
       "Things on a dating profile",
       "One-hit wonders",
       "Things in a superhero movie",
-      "Famous last words",
       "Things that go viral",
       "Reality TV shows",
       "Things at an award show",
-      "Song lyrics everyone gets wrong",
-      "Iconic movie quotes (one word)",
-      "Things fans argue about",
-      "Things that are overrated"
+      "Things fans argue about online",
+      "Things that are overpriced",
+      "Famous catchphrases",
+      "Things people binge-watch",
+      "Trends that need to die"
     ]
   },
   {
-    name: "The Great Outdoors",
+    name: "Great Outdoors",
     categories: [
       "Things you see on a hike",
       "Types of fish",
@@ -681,9 +681,9 @@ const CATEGORY_LISTS = [
       "Things that are green",
       "Wild animals",
       "Things you need sunscreen for",
-      "Types of clouds or weather",
-      "Things you find on a beach walk",
-      "Outdoor games"
+      "Outdoor games",
+      "Things you step on barefoot",
+      "Things people argue about on road trips"
     ]
   },
   {
@@ -692,32 +692,32 @@ const CATEGORY_LISTS = [
       "Things that come in a box",
       "Things you do in the morning",
       "Things at a gas station",
-      "Types of bags",
       "Things you whisper",
       "Things that spin",
       "Things associated with luck",
       "Things in a waiting room",
-      "Things you lose",
+      "Things you lose constantly",
       "Things that are heavy",
       "Things you borrow but never return",
-      "Things that make you laugh"
+      "Things that make you laugh",
+      "Things you pretend to understand"
     ]
   },
   {
     name: "Final Round",
     categories: [
       "Things that are red",
-      "Things you Google",
+      "Things you'd never Google at work",
       "Things at a New Year's party",
-      "Professions kids want to be",
       "Things in a hotel room",
       "Things that are free",
       "Things you do with friends",
       "Things that need batteries",
       "Words associated with time",
-      "Things you put in your hair",
       "Things that are old-fashioned",
-      "Things you should never say at a job interview"
+      "Things you should never say at a job interview",
+      "Things that get better with age",
+      "Things you'd put in a time capsule"
     ]
   }
 ];
@@ -925,7 +925,7 @@ async function startRound() {
   // Setup game screen
   $('game-letter').textContent = state.currentLetter;
   $('game-round-badge').textContent = `Round ${state.roundNumber} \u00B7 ${list.name}`;
-  $('timer-display').textContent = '0 / 12';
+  $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
   $('timer-display').className = 'timer-display timer-green';
 
   // Build category slots
@@ -951,38 +951,21 @@ async function startRound() {
   // Hide letter overlay
   $('letter-overlay').classList.remove('active');
 
-  // Show status
-  const banner = $('status-banner');
-  banner.textContent = 'Revealing categories...';
-  banner.classList.add('active');
-
-  // Start category reveal
-  state.phase = 'revealing';
-  await revealCategories(list.categories);
-
-  // All categories revealed
-  banner.textContent = 'Your 3 minutes start now!';
-  $('timer-display').textContent = formatTime(CONFIG.TIMER_SECONDS);
-  $('timer-display').className = 'timer-display timer-green';
-  await speak('Your 3 minutes start now!');
-  await sleep(1000);
-  banner.classList.remove('active');
-
-  // Start countdown
+  // Start the 3-minute countdown IMMEDIATELY — it runs during reveals
   state.phase = 'countdown';
   startTimer();
+
+  // Reveal categories while timer is already running
+  await revealCategories(list.categories);
 }
 
 async function revealCategories(categories) {
   for (let i = 0; i < categories.length; i++) {
-    if (state.phase !== 'revealing') return;
+    if (state.phase === 'timesup') return;
 
     const el = $(`cat-${i}`);
     el.classList.add('revealed', 'speaking');
     state.revealedCount = i + 1;
-
-    // Update the counter display during reveals
-    $('timer-display').textContent = `${i + 1} / 12`;
 
     // Scroll to revealed category
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -993,8 +976,8 @@ async function revealCategories(categories) {
     // Remove speaking highlight
     el.classList.remove('speaking');
 
-    // Wait the interval (minus speech time) before next — but not after last
-    if (i < categories.length - 1) {
+    // Wait the interval before next — but not after last
+    if (i < categories.length - 1 && state.phase !== 'timesup') {
       await sleep(CONFIG.REVEAL_INTERVAL_MS);
     }
   }
